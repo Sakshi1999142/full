@@ -31,8 +31,12 @@ function Registration() {
     }
 
     try {
-      const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
-      const response = await fetch(`${API_BASE}/api/auth/register`, {
+      // Normalize the VITE API base so deployments don't accidentally create '/api/api' requests
+      const rawApiBase = import.meta.env.VITE_API_BASE_URL || '';
+      const apiBase = rawApiBase.replace(/\/+$|\/api$/i, '');
+      const target = apiBase ? `${apiBase}/api/auth/register` : '/api/auth/register';
+
+      const response = await fetch(target, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

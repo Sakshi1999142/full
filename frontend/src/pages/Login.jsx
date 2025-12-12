@@ -32,8 +32,11 @@ function LoginPage() {
     setSuccessMessage(""); // Clear success message when logging in
  
     try {
-      const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
-      const response = await fetch(`${API_BASE}/api/auth/login`, {
+      const rawApiBase = import.meta.env.VITE_API_BASE_URL || '';
+      const apiBase = rawApiBase.replace(/\/+$|\/api$/i, '');
+      const target = apiBase ? `${apiBase}/api/auth/login` : '/api/auth/login';
+
+      const response = await fetch(target, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })

@@ -1,7 +1,12 @@
 import axios from 'axios';
 
+// Normalize VITE_API_BASE_URL to avoid accidental trailing slashes or '/api' duplication
+const rawApiBase = import.meta.env.VITE_API_BASE_URL || '';
+const normalizedApiBase = rawApiBase.replace(/\/+$|\/api$/i, '').replace(/\/api\/$/i, '');
+const axiosBaseURL = normalizedApiBase ? `${normalizedApiBase}/api` : '';
+
 const axiosClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || '',
+  baseURL: axiosBaseURL,
   timeout: 20000,
 });
 

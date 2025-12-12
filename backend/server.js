@@ -117,10 +117,27 @@ app.use('/api/student', studentRoutesFile);
 app.use('/api/enrollments', enrollmentRoutes);
 app.use('/api/parents', parentRoutes);
 
-// Welcome route
+// Welcome route (API root)
 app.get("/", (req, res) => {
   res.send("KavyaLearn API is running...");
 });
+
+// When deployed in production, optionally serve the frontend client build from the backend.
+// This is useful if you're hosting both client and server on the same host.
+if (process.env.NODE_ENV === 'production') {
+  const clientBuildPath = process.env.CLIENT_BUILD_PATH || path.join(__dirname, '..', 'frontend', 'dist');
+  console.log('➡️  Serving static client files from:', clientBuildPath);
+  try {
+    app.use(express.static(clientBuildPath));
+    // Fallback middleware to return client index.html for client-side routing (non-API paths)
+    app.use((req, res, next) => {
+      if (req.originalUrl && req.originalUrl.startsWith('/api')) return next();
+      res.sendFile(path.join(clientBuildPath, 'index.html'));
+    });
+  } catch (err) {
+    console.warn('⚠️  Could not serve client files:', err.message);
+  }
+}
 
 // 404 handler
 app.use((req, res, next) => {

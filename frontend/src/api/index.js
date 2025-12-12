@@ -1,4 +1,6 @@
-const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
+// Normalize the VITE API base URL so deploys don't accidentally include '/api' or trailing slashes.
+const rawApiBase = import.meta.env.VITE_API_BASE_URL || '';
+const API_BASE = rawApiBase.replace(/\/+$|\/api$/i, '');
 const BASE = API_BASE ? `${API_BASE}/api` : '/api';
 
 function authHeaders(isForm = false) {
